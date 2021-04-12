@@ -1,0 +1,117 @@
+<!-- Modal -->
+<div class="modal fade" id="order" data-backdrop="static" data-keyboard="false" tabindex="-1"
+     aria-labelledby="orderModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Pedido</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form role="form">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="customer">Cliente</label>
+                                <select class="form-control form-control-alternative"
+                                        aria-label="Default select example" id="customer">
+                                    <option selected disabled>Selecione o cliente</option>
+                                    <option value="1">One</option>
+                                    <option value="2">Two</option>
+                                    <option value="3">Three</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="product">Produto</label>
+                                <select class="form-control form-control-alternative"
+                                        aria-label="Default select example" id="product">
+                                    <option selected disabled>Selecione o produto</option>
+                                    <option value="1">One</option>
+                                    <option value="2">Two</option>
+                                    <option value="3">Three</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="quantity">Quantidade</label>
+                                <input type="number" min="0" class="form-control form-control-alternative"
+                                       id="quantity" placeholder="0">
+                            </div>
+                        </div>
+                        <div class="col-md-7">
+                            <div class="form-group">
+                                <label for="valueItem">Valor</label>
+                                <input type="number" min="0" class="form-control form-control-alternative"
+                                       id="valueItem" placeholder="R$ 0,00">
+                            </div>
+                        </div>
+                        <div class="col-md-1 align-self-center">
+                            <button type="button" onclick="addItem()" class="btn btn-primary btn-sm"><i class="fas fa-plus"></i></button>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table align-items-center table-flush" id="items">
+                            <thead class="thead-light">
+                            <tr>
+                                <th scope="col">Produto</th>
+                                <th scope="col">Quantidade</th>
+                                <th scope="col">Valor</th>
+                                <th scope="col">Total</th>
+                                <th scope="col">Rentabilidade</th>
+                                <th scope="col"></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">
+                            Cancelar
+                        </button>
+                        <button type="submit" class="btn btn-primary">Salvar</button>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+{% block javascripts %}
+    <script>
+        function addItem() {
+            let tableItems = document.getElementById('items');
+            let numberLines = tableItems.rows.length;
+            let line = tableItems.insertRow(numberLines);
+            let product = line.insertCell(0);
+            let quantity = line.insertCell(1);
+            let valueItem = line.insertCell(2);
+            let total = line.insertCell(3);
+            let rentability = line.insertCell(4);
+            let action = line.insertCell(5);
+            product.innerHTML = document.getElementById('product').value;
+            quantity.innerHTML = document.getElementById('quantity').value;
+            valueItem.innerHTML = parseFloat(document.getElementById('valueItem').value).toLocaleString('pt-br', { style: 'currency', currency: 'BRL' });
+            let totalItem = parseFloat(document.getElementById('quantity').value * document.getElementById('valueItem').value);
+            total.innerHTML = totalItem.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' });
+            rentability.innerHTML = '';
+            action.innerHTML = '<button type="button" onclick="removeItem(this)" class="btn btn-danger btn-sm"><i class="fas fa-minus-circle"></i></button>';
+        }
+        function removeItem(line) {
+            let item = line.parentNode.parentNode.rowIndex;
+            document.getElementById('items').deleteRow(item);
+        }
+    </script>
+
+{% endblock javascripts %}
