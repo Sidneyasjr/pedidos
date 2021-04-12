@@ -10,11 +10,11 @@
 6. Execute os testes
 
 ````console
-git clone git@github.com:sidneyasjr/xxxxxxxxxx
+git clone https://github.com/Sidneyasjr/pedidos.git
 cd wttd
-python -m venv .wttd
+python -m venv .venv
 source .wttd/bin/activate
-pip install -r requirements-dev.txt
+pip install -r requirements.txt
 cp contrib/env.sample .env
 python manage.py test
 ````
