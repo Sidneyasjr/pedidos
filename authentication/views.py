@@ -1,7 +1,3 @@
-# -*- encoding: utf-8 -*-
-"""
-Copyright (c) 2019 - present AppSeed.us
-"""
 
 from django.contrib.auth import authenticate, login
 # Create your views here.
@@ -25,8 +21,8 @@ def login_view(request):
                 login(request, user)
                 return redirect("/")
             else:
-                msg = 'Invalid credentials'
+                msg = 'Credencias invalidas'
         else:
-            msg = 'Error validating the form'
+            msg = 'Erro na validação do formulario'
 
     return render(request, "accounts/login.html", {"form": form, "msg": msg})

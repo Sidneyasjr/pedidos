@@ -44,19 +44,20 @@
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label for="quantity">Quantidade</label>
-                                <input type="number" min="0" class="form-control form-control-alternative"
+                                <input type="number" min="0" class="form-control"
                                        id="quantity" placeholder="0">
                             </div>
                         </div>
                         <div class="col-md-7">
                             <div class="form-group">
                                 <label for="valueItem">Valor</label>
-                                <input type="number" min="0" class="form-control form-control-alternative"
+                                <input type="number" min="0" class="form-control"
                                        id="valueItem" placeholder="R$ 0,00">
                             </div>
                         </div>
                         <div class="col-md-1 align-self-center">
-                            <button type="button" onclick="addItem()" class="btn btn-primary btn-sm"><i class="fas fa-plus"></i></button>
+                            <button type="button" onclick="addItem()" class="btn btn-primary btn-sm"><i
+                                    class="fas fa-plus"></i></button>
                         </div>
                     </div>
                     <div class="table-responsive">
@@ -91,23 +92,36 @@
 {% block javascripts %}
     <script>
         function addItem() {
-            let tableItems = document.getElementById('items');
-            let numberLines = tableItems.rows.length;
-            let line = tableItems.insertRow(numberLines);
-            let product = line.insertCell(0);
-            let quantity = line.insertCell(1);
-            let valueItem = line.insertCell(2);
-            let total = line.insertCell(3);
-            let rentability = line.insertCell(4);
-            let action = line.insertCell(5);
-            product.innerHTML = document.getElementById('product').value;
-            quantity.innerHTML = document.getElementById('quantity').value;
-            valueItem.innerHTML = parseFloat(document.getElementById('valueItem').value).toLocaleString('pt-br', { style: 'currency', currency: 'BRL' });
-            let totalItem = parseFloat(document.getElementById('quantity').value * document.getElementById('valueItem').value);
-            total.innerHTML = totalItem.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' });
-            rentability.innerHTML = '';
-            action.innerHTML = '<button type="button" onclick="removeItem(this)" class="btn btn-danger btn-sm"><i class="fas fa-minus-circle"></i></button>';
+            if (!document.getElementById('quantity').value || !document.getElementById('valueItem').value) {
+                if (!document.getElementById('quantity').value) {
+                    document.getElementById('quantity').classList.add('is-invalid');
+                } else {
+                    document.getElementById('valueItem').classList.add('is-invalid');
+                }
+
+            } else {
+                let tableItems = document.getElementById('items');
+                let numberLines = tableItems.rows.length;
+                let line = tableItems.insertRow(numberLines);
+                let product = line.insertCell(0);
+                let quantity = line.insertCell(1);
+                let valueItem = line.insertCell(2);
+                let total = line.insertCell(3);
+                let rentability = line.insertCell(4);
+                let action = line.insertCell(5);
+                product.innerHTML = document.getElementById('product').value;
+                quantity.innerHTML = document.getElementById('quantity').value;
+                valueItem.innerHTML = parseFloat(document.getElementById('valueItem').value).toLocaleString('pt-br', {
+                    style: 'currency',
+                    currency: 'BRL'
+                });
+                let totalItem = parseFloat(document.getElementById('quantity').value * document.getElementById('valueItem').value);
+                total.innerHTML = totalItem.toLocaleString('pt-br', {style: 'currency', currency: 'BRL'});
+                rentability.innerHTML = '';
+                action.innerHTML = '<button type="button" onclick="removeItem(this)" class="btn btn-danger btn-sm"><i class="fas fa-minus-circle"></i></button>';
+            }
         }
+
         function removeItem(line) {
             let item = line.parentNode.parentNode.rowIndex;
             document.getElementById('items').deleteRow(item);
