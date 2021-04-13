@@ -1,5 +1,7 @@
 from django.db import models
 
+from utils import utils
+
 
 class Customer(models.Model):
     name = models.CharField('nome', max_length=100)
@@ -15,14 +17,28 @@ class Customer(models.Model):
 
 class Product(models.Model):
     name = models.CharField('nome', max_length=100)
-    price = models.FloatField('price')
-    multiple = models.PositiveIntegerField('multiplo')
+    price = models.DecimalField('preço', max_digits=15, decimal_places=2)
+    multiple = models.PositiveIntegerField('multiplo', default=1)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name_plural = 'produtos'
+        verbose_name = 'produto'
+        ordering = ('id',)
 
 
 class Order(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
-    quantity = models.PositiveIntegerField('quantidade', blank=True)
-    total = models.FloatField(blank=True)
+    date = models.DateField('date', null=True, blank=True, auto_now_add=True)
+    quantity = models.PositiveIntegerField('quantidade', null=True, blank=True)
+    total = models.FloatField(null=True, blank=True)
+
+    def get_total_format(self):
+        return utils.format_price(self.total)
+
+    get_total_format.short_description = 'Total'
 
     class Meta:
         verbose_name_plural = 'pedidos'
@@ -30,23 +46,26 @@ class Order(models.Model):
         ordering = ('-id',)
 
     def __str__(self):
-        return f'Pedido Nº.: {self.pk}'
+        return f'Pedido: {self.pk}'
 
 
 class Item(models.Model):
     RENTABILITY_CHOICES = (
-        (1, 'Great'),
-        (2, 'Good'),
-        (3, 'Bad')
+        (1, 'Ótima'),
+        (2, 'Boa'),
+        (3, 'Ruim')
     )
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
-    product = models.PositiveIntegerField('produto')
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField('quantidade', default=1)
-    price = models.FloatField('preço')
-    total = models.FloatField()
+    price = models.DecimalField('preço', max_digits=15, decimal_places=2, null=True, blank=True)
+    total = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
     rentability = models.IntegerField(choices=RENTABILITY_CHOICES)
 
     class Meta:
         verbose_name_plural = 'itens'
         verbose_name = 'item'
         ordering = ('-id',)
+
+    def __str__(self):
+        return f'Item: {self.pk} - {self.order}'

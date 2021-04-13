@@ -1,13 +1,17 @@
 from django import template
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
+from django.shortcuts import render
 from django.template import loader
+from .services import list_orders, total_orders, revenues_orders
 
 
 @login_required(login_url="/login/")
 def index(request):
-    context = {}
-    context['segment'] = 'index'
+    orders = list_orders()
+    total = total_orders()
+    revenues = revenues_orders()
+    context = {'orders': orders, 'total': total, 'revenues': revenues}
 
     html_template = loader.get_template('index.html')
     return HttpResponse(html_template.render(context, request))
@@ -19,7 +23,6 @@ def pages(request):
     # All resource paths end in .html.
     # Pick out the html file name from the url. And load that template.
     try:
-
         load_template = request.path.split('/')[-1]
         context['segment'] = load_template
 
@@ -35,3 +38,4 @@ def pages(request):
 
         html_template = loader.get_template('page-500.html')
         return HttpResponse(html_template.render(context, request))
+
