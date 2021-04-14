@@ -1,9 +1,12 @@
-from django import template
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.template import loader
-from .services import list_orders, total_orders, revenues_orders
+
+from .forms import OrderForm, ItemForm
+from .models import Customer, Product, Item
+from .services import *
 
 
 @login_required(login_url="/login/")
@@ -18,24 +21,24 @@ def index(request):
 
 
 @login_required(login_url="/login/")
-def pages(request):
-    context = {}
-    # All resource paths end in .html.
-    # Pick out the html file name from the url. And load that template.
-    try:
-        load_template = request.path.split('/')[-1]
-        context['segment'] = load_template
-
-        html_template = loader.get_template(load_template)
-        return HttpResponse(html_template.render(context, request))
-
-    except template.TemplateDoesNotExist:
-
-        html_template = loader.get_template('page-404.html')
-        return HttpResponse(html_template.render(context, request))
-
-    except:
-
-        html_template = loader.get_template('page-500.html')
-        return HttpResponse(html_template.render(context, request))
-
+def create(request):
+    if request.method == 'POST':
+        form_order = OrderForm(request.POST)
+        form_item = ItemForm(request.POST)
+        if form_order.is_valid():
+            customer = form_order.cleaned_data["customer"]
+            customer_bd = Customer.objects.get(id=customer)
+            new_order = Order.objects.create(customer=customer_bd)
+            if form_item.is_valid():
+                product = form_item.cleaned_data["product"]
+                product_bd = Product.objects.get(id=product)
+                quantity = form_item.cleaned_data["quantity"]
+                price = form_item.cleaned_data["price"]
+                total = form_item.cleaned_data["price"]
+                Item.objects.create(order=new_order, product=product_bd, quantity=quantity, price=price, total=total,
+                                    rentability='1')
+        return redirect('home')
+    else:
+        form_order = OrderForm()
+        form_item = ItemForm()
+    return render(request, 'order.html', {'form_order': form_order, 'form_item': form_item})

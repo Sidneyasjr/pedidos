@@ -1,5 +1,6 @@
-from .models import Order
 from django.db.models import Sum
+
+from .models import Order
 
 
 def list_orders():
@@ -15,4 +16,5 @@ def total_orders():
 def revenues_orders():
     revenues = Order.objects.aggregate(Sum('total'))
     return revenues['total__sum']
+
 

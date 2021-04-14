@@ -37,7 +37,7 @@
                                 <div class="row">
                                     <div class="col">
                                         <h5 class="card-title text-uppercase text-muted mb-0">Faturamento Total</h5>
-                                        <span class="h2 font-weight-bold mb-0">{{ revenues|format_price }}</span>
+                                        <span class="h2 font-weight-bold mb-0">{{ revenues }}</span>
                                     </div>
                                     <div class="col-auto">
                                         <div class="icon icon-shape bg-gradient-yellow text-white rounded-circle shadow">
@@ -62,13 +62,10 @@
                     <div class="card-header border-0">
                         <div class="row justify-content-center">
                             <!-- Button trigger modal -->
-                            <button type="button" class="btn btn-primary btn-lg" data-toggle="modal"
-                                    data-target="#order">
+                            <a href="{% url 'order' %}" class="btn btn-primary btn-lg" >
                                 <i class="fas fa-cart-plus"></i> NOVO PEDIDO
-                            </button>
+                            </a>
                         </div>
-                        <!-- Modal -->
-                        {% include 'order.html' %}
                     </div>
 
                     <div class="table-responsive">
@@ -90,7 +87,7 @@
                                     </th>
                                     <td>{{ order.date }}</td>
                                     <td>{{ order.customer }}</td>
-                                    <td>{{ order.total|format_price }}</td>
+                                    <td>{{ order.total }}</td>
                                     <td class="text-right">
                                         <div class="dropdown">
                                             <a class="btn btn-sm btn-icon-only text-light" href="#" role="button"
