@@ -60,7 +60,7 @@ class Item(models.Model):
     quantity = models.PositiveIntegerField('quantidade', default=1)
     price = models.DecimalField('preço', max_digits=15, decimal_places=2, null=True, blank=True)
     total = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
-    rentability = models.IntegerField(choices=RENTABILITY_CHOICES)
+    rentability = models.IntegerField(choices=RENTABILITY_CHOICES, null=True, blank=True)
 
     class Meta:
         verbose_name_plural = 'itens'

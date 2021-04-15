@@ -1,5 +1,6 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.decorators import login_required
+from django.forms import inlineformset_factory
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.template import loader
@@ -22,23 +23,27 @@ def index(request):
 
 @login_required(login_url="/login/")
 def create(request):
-    if request.method == 'POST':
-        form_order = OrderForm(request.POST)
-        form_item = ItemForm(request.POST)
-        if form_order.is_valid():
-            customer = form_order.cleaned_data["customer"]
-            customer_bd = Customer.objects.get(id=customer)
-            new_order = Order.objects.create(customer=customer_bd)
-            if form_item.is_valid():
-                product = form_item.cleaned_data["product"]
-                product_bd = Product.objects.get(id=product)
-                quantity = form_item.cleaned_data["quantity"]
-                price = form_item.cleaned_data["price"]
-                total = form_item.cleaned_data["price"]
-                Item.objects.create(order=new_order, product=product_bd, quantity=quantity, price=price, total=total,
-                                    rentability='1')
-        return redirect('home')
-    else:
+    if request.method == 'GET':
         form_order = OrderForm()
-        form_item = ItemForm()
-    return render(request, 'order.html', {'form_order': form_order, 'form_item': form_item})
+        form_item_factory = inlineformset_factory(Order, Item, form=ItemForm, extra=0, can_delete=True, min_num=1, validate_min=True)
+        form_item = form_item_factory
+        context = {
+            'form_order': form_order,
+            'form_item': form_item,
+        }
+        return render(request, "order.html", context)
+    elif request.method == 'POST':
+        form_order = OrderForm(request.POST)
+        form_item_factory = inlineformset_factory(Order, Item, form=ItemForm)
+        form_item = form_item_factory(request.POST)
+        if form_order.is_valid() and form_item.is_valid():
+            order = form_order.save()
+            form_item.instance = order
+            form_item.save()
+            return redirect('home')
+        else:
+            context = {
+                'form_order': form_order,
+                'form_item': form_item,
+            }
+        return render(request, 'order.html', context)

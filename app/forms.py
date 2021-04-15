@@ -1,19 +1,15 @@
 from django import forms
 
-from .models import Customer, Product
+from .models import Order, Item
 
 
-class OrderForm(forms.Form):
-    customer = forms.ChoiceField(label='Cliente',
-                                 choices=[('0', 'Selecione o cliente')] + [(customer.id, customer.name) for customer in
-                                                                           Customer.objects.all()])
+class OrderForm(forms.ModelForm):
+    class Meta:
+        model = Order
+        exclude = ['date', 'quantity', 'total']
 
 
-class ItemForm(forms.Form):
-    product = forms.ChoiceField(label='Prduto',
-                                choices=[('0', 'Selecione o produto')] + [(product.id, product.name) for product in
-                                                                          Product.objects.all()])
-    quantity = forms.IntegerField(label='Quantidade')
-    price = forms.FloatField(label='Praço')
-    total = forms.FloatField(label='Total')
-    rentability = forms.ChoiceField(label='Rentabilidade')
+class ItemForm(forms.ModelForm):
+    class Meta:
+        model = Item
+        exclude = ['rentability']
