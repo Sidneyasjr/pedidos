@@ -1,12 +1,11 @@
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.decorators import login_required
 from django.forms import inlineformset_factory
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.template import loader
 
 from .forms import OrderForm, ItemForm
-from .models import Customer, Product, Item
+from .models import Product, Item
 from .services import *
 
 
@@ -23,13 +22,16 @@ def index(request):
 
 @login_required(login_url="/login/")
 def create(request):
+    products = list(Product.objects.all())
     if request.method == 'GET':
         form_order = OrderForm()
-        form_item_factory = inlineformset_factory(Order, Item, form=ItemForm, extra=0, can_delete=True, min_num=1, validate_min=True)
+        form_item_factory = inlineformset_factory(Order, Item, form=ItemForm, extra=0, can_delete=True, min_num=1,
+                                                  validate_min=True)
         form_item = form_item_factory
         context = {
             'form_order': form_order,
             'form_item': form_item,
+            'products': products
         }
         return render(request, "order.html", context)
     elif request.method == 'POST':

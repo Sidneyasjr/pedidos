@@ -57,10 +57,10 @@ class Item(models.Model):
     )
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    quantity = models.PositiveIntegerField('quantidade', default=1)
+    quantity = models.PositiveIntegerField('quantidade')
     price = models.DecimalField('preço', max_digits=15, decimal_places=2, null=True, blank=True)
     total = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
-    rentability = models.IntegerField(choices=RENTABILITY_CHOICES, null=True, blank=True)
+    rentability = models.IntegerField(choices=RENTABILITY_CHOICES, null=True, blank=True, default=2)
 
     class Meta:
         verbose_name_plural = 'itens'
