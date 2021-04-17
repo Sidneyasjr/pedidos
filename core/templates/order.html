@@ -45,9 +45,9 @@
                             </div>
                             {{ form_item.management_form }}
                             <div class="table-responsive">
-                                <table class="table align-items-center table-flush">
+                                <table class="table align-items-center table-flush" id="items">
                                     <thead class="thead-light">
-                                    <tr class="inlineform">
+                                    <tr>
                                         <th scope="col">Produto</th>
                                         <th scope="col">Preço</th>
                                         <th scope="col">QTD</th>
@@ -61,10 +61,10 @@
                                         <tr class="inlineForm">
                                             <td>{{ items.product|addclass:'form-control form-control-sm' }}</td>
                                             <td>{{ items.price|addclass:'form-control form-control-sm' }}</td>
-                                            <td>{{ items.quantity|addclass:'form-control form-control-sm' }}</td>
-                                            <td>{{ items.total|addclass:'form-control form-control-sm' }}</td>
+                                            <td>{{ items.quantity|addclass:'form-control form-control-sm quantity' }}</td>
+                                            <td>{{ items.total|addclass:'form-control form-control-sm total' }}</td>
                                             <td>{{ items.rentability|addclass:'form-control form-control-sm' }}</td>
-                                            <td>{{ items.DELETE }}</td>
+                                            <td>{{ items.DELETE|addclass:'deleteItem' }}</td>
                                         </tr>
                                     {% endfor %}
                                     </tbody>
@@ -97,7 +97,7 @@
         {% for product in products %}
             productMultiple = {{ product.multiple }};
             productPrice = {{ product.price }}
-            multiples.push(productMultiple)
+                multiples.push(productMultiple)
             priceProduct.push(productPrice)
         {% endfor %}
 
@@ -106,37 +106,81 @@
                 prefix: '{{ form_item.prefix }}',
                 addText: 'Adicionar novo Item',
                 deleteText: 'Remover este item',
+                removed: removeTotalOrder,
             });
         })
+
+        function removeTotalOrder() {
+            let totalOrder = 0;
+            $(".total").each(function () {
+                if ($(this).val() > 0) {
+                    totalOrder += parseFloat($(this).val());
+                }
+            });
+            $('#id_total').val(totalOrder.toFixed(2));
+
+            let quantityOrder = 0;
+            $(".quantity").each(function () {
+                if ($(this).val() > 0) {
+                    quantityOrder += parseInt($(this).val());
+                }
+
+            });
+            $('#id_quantity').val(quantityOrder);
+        }
+
+
+        $('.inlineForm').change(function calcTotalOrder() {
+            let totalOrder = 0;
+            $(".total").each(function () {
+                if ($(this).val() > 0) {
+                    totalOrder += parseFloat($(this).val());
+                }
+            });
+            $('#id_total').val(totalOrder.toFixed(2));
+
+            let quantityOrder = 0;
+            $(".quantity").each(function () {
+                if ($(this).val() > 0) {
+                    quantityOrder += parseInt($(this).val());
+                }
+
+            });
+            $('#id_quantity').val(quantityOrder);
+        })
+
 
         function dynamic_product(object) {
             let index = object.closest("tr").rowIndex - 1;
             let product = $('#id_item_set-' + index + '-product').val();
-            let step = multiples[product-1]
+            let step = multiples[product - 1]
             let quantity = $('#id_item_set-' + index + '-quantity');
             quantity.attr({'step': step});
             quantity.val(step)
-            let priceDefault = priceProduct[product-1]
+            let priceDefault = priceProduct[product - 1]
             $('#id_item_set-' + index + '-price').val(priceDefault);
             $('#id_item_set-' + index + '-total').val(priceDefault * step);
         }
 
+
         function dynamic_total(object) {
             let index = object.closest("tr").rowIndex - 1;
             let product = $('#id_item_set-' + index + '-product').val();
-            let priceDefault = parseFloat(priceProduct[product-1])
+            let priceDefault = parseFloat(priceProduct[product - 1])
             let quantity = $('#id_item_set-' + index + '-quantity').val();
             let price = $('#id_item_set-' + index + '-price').val();
             let total = parseFloat(quantity) * parseFloat(price);
-            $('#id_item_set-' + index + '-total').val(total);
+            console.log(total)
+            let totalItem = $('#id_item_set-' + index + '-total').val(total.toFixed(2));
             let percent = (priceDefault / 100) * 10;
             if (price > priceDefault) {
-                 $('#id_item_set-' + index + '-rentability').val('1');
+                $('#id_item_set-' + index + '-rentability').val('1');
             } else if (price < priceDefault - percent) {
-                 $('#id_item_set-' + index + '-rentability').val('3');
+                $('#id_item_set-' + index + '-rentability').val('3');
             } else {
                 $('#id_item_set-' + index + '-rentability').val('2');
             }
         }
+
     </script>
 {% endblock javascripts %}

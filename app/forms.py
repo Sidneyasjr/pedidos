@@ -13,7 +13,7 @@ class OrderForm(forms.ModelForm):
                 attrs={'readonly': True}
             ),
             'total': NumberInput(
-                attrs={'readonly': True}
+                attrs={'readonly': True, 'min': '0', 'step': '0.01'}
             )
         }
 
@@ -27,13 +27,13 @@ class ItemForm(forms.ModelForm):
                 attrs={'oninput': 'dynamic_product(this)'}
             ),
             'price': NumberInput(
-                attrs={'oninput': 'dynamic_total(this)'}
+                attrs={'oninput': 'dynamic_total(this)', 'min': '0'}
             ),
             'quantity': NumberInput(
                 attrs={'oninput': 'dynamic_total(this)'}
             ),
             'total': NumberInput(
-                attrs={'readonly': True}
+                attrs={'readonly': True, 'min': '0', 'step': '0.01'}
             ),
             'rentability': Select(
                 attrs={'readonly': True}
