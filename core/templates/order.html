@@ -1,7 +1,5 @@
 {% extends 'layouts/base.html' %}
 
-{% load omfilters %}
-
 {% block title %} Pedido {% endblock title %}
 
 {% block content %}
@@ -15,9 +13,6 @@
         <div class="row">
             <div class="col">
                 <div class="card shadow">
-                    <div class="card-header border-0">
-                        <h3 class="mb-0">Novo Pedido</h3>
-                    </div>
                     <div class="card-body">
                         <form role="form" method="post">
                             {% csrf_token %}
@@ -25,7 +20,7 @@
                                 <div class="col-md-12">
                                     <div class="form-group">
                                         <label for="{{ form_order.customer.id_for_label }}">Cliente</label>
-                                        {{ form_order.customer|addclass:'form-control' }}
+                                        {{ form_order.customer }}
                                     </div>
                                 </div>
                             </div>
@@ -33,21 +28,22 @@
                                 <div class="col-md-3">
                                     <div class="form-group">
                                         <label for="{{ form_order.quantity.id_for_label }}">Quantidade</label>
-                                        {{ form_order.quantity|addclass:'form-control form-control-sm' }}
+                                        {{ form_order.quantity }}
                                     </div>
                                 </div>
                                 <div class="col-md-3">
                                     <div class="form-group">
+                                        {{ form_order.errors }}
                                         <label for="{{ form_order.total.id_for_label }}">Total</label>
-                                        {{ form_order.total|addclass:'form-control form-control-sm' }}
+                                        {{ form_order.total }}
                                     </div>
                                 </div>
                             </div>
-                            {{ form_item.management_form }}
                             <div class="table-responsive">
-                                <table class="table align-items-center table-flush" id="items">
+                                <table class="table align-items-center table-flush form">
                                     <thead class="thead-light">
                                     <tr>
+                                        <th scope="col">#</th>
                                         <th scope="col">Produto</th>
                                         <th scope="col">Preço</th>
                                         <th scope="col">QTD</th>
@@ -56,26 +52,44 @@
                                         <th scope="col"></th>
                                     </tr>
                                     </thead>
-                                    <tbody>
+                                    {{ form_item.management_form }}
+                                    <tbody id="form_item_{{ forloop.counter }}">
                                     {% for items in form_item %}
-                                        <tr class="inlineForm">
-                                            <td>{{ items.product|addclass:'form-control form-control-sm' }}</td>
-                                            <td>{{ items.price|addclass:'form-control form-control-sm' }}</td>
-                                            <td>{{ items.quantity|addclass:'form-control form-control-sm quantity' }}</td>
-                                            <td>{{ items.total|addclass:'form-control form-control-sm total' }}</td>
-                                            <td>{{ items.rentability|addclass:'form-control form-control-sm' }}</td>
-                                            <td>{{ items.DELETE|addclass:'deleteItem' }}</td>
+                                        {{ items.errors }}
+                                        {% if forloop.first %}
+                                            {{ items.order }}
+                                        {% endif %}
+                                        <tr>
+                                            {{ items.id }}
+                                            <td>{{ forloop.counter }}</td>
+                                            <td>{{ items.product }}</td>
+                                            <td>{{ items.price }}</td>
+                                            <td>{{ items.quantity }}</td>
+                                            <td>{{ items.total }}</td>
+                                            <td>{{ items.rentability }}</td>
+                                            <td>{{ items.DELETE }}</td>
                                         </tr>
                                     {% endfor %}
                                     </tbody>
                                 </table>
                             </div>
                             <hr>
-                            <div>
-                                <button type="button" class="btn btn-danger" data-dismiss="modal">
-                                    Cancelar
+                            <div class="row justify-content-center">
+
+                                <a href="{% url 'order' %}" type="button" class="btn btn-primary"
+                                   data-dismiss="modal">
+                                    <i class="fas fa-file"></i>
+                                    Novo
+                                </a>
+
+                                <button type="submit" class="btn btn-success"><i class="fas fa-save"></i> Salvar
                                 </button>
-                                <button type="submit" class="btn btn-primary">Salvar</button>
+
+                                <a href="{% url 'home' %}" type="button" class="btn btn-danger"
+                                   data-dismiss="modal">
+                                    <i class="fas fa-sign-out-alt"></i>
+                                    Cancelar
+                                </a>
                             </div>
                         </form>
                     </div>
@@ -101,15 +115,6 @@
             priceProduct.push(productPrice)
         {% endfor %}
 
-        $(function () {
-            $('.inlineForm').formset({
-                prefix: '{{ form_item.prefix }}',
-                addText: 'Adicionar novo Item',
-                deleteText: 'Remover este item',
-                removed: removeTotalOrder,
-            });
-        })
-
         function removeTotalOrder() {
             let totalOrder = 0;
             $(".total").each(function () {
@@ -130,7 +135,7 @@
         }
 
 
-        $('.inlineForm').change(function calcTotalOrder() {
+        $('.form tbody tr').change(function calcTotalOrder() {
             let totalOrder = 0;
             $(".total").each(function () {
                 if ($(this).val() > 0) {
@@ -170,8 +175,7 @@
             let quantity = $('#id_item_set-' + index + '-quantity').val();
             let price = $('#id_item_set-' + index + '-price').val();
             let total = parseFloat(quantity) * parseFloat(price);
-            console.log(total)
-            let totalItem = $('#id_item_set-' + index + '-total').val(total.toFixed(2));
+            $('#id_item_set-' + index + '-total').val(total.toFixed(2));
             let percent = (priceDefault / 100) * 10;
             if (price > priceDefault) {
                 $('#id_item_set-' + index + '-rentability').val('1');
@@ -182,5 +186,13 @@
             }
         }
 
+        $(function () {
+            $('.form tbody tr').formset({
+                prefix: '{{ form_item.prefix }}',
+                addText: 'Novo Item',
+                deleteText: 'Remover',
+                removed: removeTotalOrder,
+            });
+        })
     </script>
 {% endblock javascripts %}

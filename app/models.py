@@ -1,7 +1,5 @@
 from django.db import models
 
-from utils import utils
-
 
 class Customer(models.Model):
     name = models.CharField('nome', max_length=100)
@@ -33,12 +31,7 @@ class Order(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
     date = models.DateField('date', null=True, blank=True, auto_now_add=True)
     quantity = models.PositiveIntegerField('quantidade', null=True, blank=True)
-    total = models.FloatField(null=True, blank=True)
-
-    def get_total_format(self):
-        return utils.format_price(self.total)
-
-    get_total_format.short_description = 'Total'
+    total = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
 
     class Meta:
         verbose_name_plural = 'pedidos'

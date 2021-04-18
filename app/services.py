@@ -1,6 +1,6 @@
 from django.db.models import Sum
 
-from .models import Order
+from .models import Order, Item
 
 
 def list_orders():
@@ -18,3 +18,6 @@ def revenues_orders():
     return revenues['total__sum']
 
 
+def detail_oder(id):
+    order = Order.objects.filter(id=id).first()
+    return order

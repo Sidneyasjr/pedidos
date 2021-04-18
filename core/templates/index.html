@@ -1,5 +1,4 @@
 {% extends 'layouts/base.html' %}
-{% load omfilters %}
 
 {% block title %} Dashboard {% endblock title %}
 
@@ -37,7 +36,7 @@
                                 <div class="row">
                                     <div class="col">
                                         <h5 class="card-title text-uppercase text-muted mb-0">Faturamento Total</h5>
-                                        <span class="h2 font-weight-bold mb-0">{{ revenues|format_price }}</span>
+                                        <span class="h2 font-weight-bold mb-0">{{ revenues }}</span>
                                     </div>
                                     <div class="col-auto">
                                         <div class="icon icon-shape bg-gradient-yellow text-white rounded-circle shadow">
@@ -87,19 +86,8 @@
                                     </th>
                                     <td>{{ order.date }}</td>
                                     <td>{{ order.customer }}</td>
-                                    <td>{{ order.total|format_price }}</td>
-                                    <td class="text-right">
-                                        <div class="dropdown">
-                                            <a class="btn btn-sm btn-icon-only text-light" href="#" role="button"
-                                               data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                <i class="fas fa-ellipsis-v"></i>
-                                            </a>
-                                            <div class="dropdown-menu dropdown-menu-right dropdown-menu-arrow">
-                                                <a class="dropdown-item" href="#">Editar</a>
-                                                <a class="dropdown-item" href="#">Excluir</a>
-                                            </div>
-                                        </div>
-                                    </td>
+                                    <td>{{ order.total }}</td>
+                                    <td><a class="btn btn-primary btn-sm" href="{% url 'edit' order_id=order.id %}"><i class="fas fa-edit"></i></a></td>
 
                                 </tr>
                             {% endfor %}
