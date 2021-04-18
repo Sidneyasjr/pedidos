@@ -9,11 +9,14 @@ class OrderForm(forms.ModelForm):
         model = Order
         exclude = ['date']
         widgets = {
+            'customer': Select(
+                attrs={'class': 'form-control form-control-sm'}
+            ),
             'quantity': NumberInput(
-                attrs={'readonly': True}
+                attrs={'readonly': True, 'class': 'form-control form-control-sm'}
             ),
             'total': NumberInput(
-                attrs={'readonly': True, 'min': '0', 'step': '0.01'}
+                attrs={'readonly': True, 'class': 'form-control form-control-sm'}
             )
         }
 
