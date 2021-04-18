@@ -1,5 +1,5 @@
 {% extends 'layouts/base.html' %}
-
+{% load omfilters %}
 {% block title %} Pedido {% endblock title %}
 
 {% block content %}
@@ -84,11 +84,15 @@
 
                                 <button type="submit" class="btn btn-success"><i class="fas fa-save"></i> Salvar
                                 </button>
-
-                                <a href="{% url 'home' %}" type="button" class="btn btn-danger"
-                                   data-dismiss="modal">
+                                {% if form_order.instance.pk %}
+                                    <a href="{% url 'delete' form_order.instance.pk %}" type="button" class="btn btn-danger">
+                                        <i class="fas fa-minus"></i>
+                                        Excluir
+                                    </a>
+                                {% endif %}
+                                <a href="{% url 'home' %}" type="button" class="btn btn-info">
                                     <i class="fas fa-sign-out-alt"></i>
-                                    Cancelar
+                                    Voltar
                                 </a>
                             </div>
                         </form>

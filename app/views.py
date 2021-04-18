@@ -50,10 +50,10 @@ def create(request):
         return render(request, 'order.html', context)
 
 
-def update(request, order_id):
+def update(request, id):
     products = list(Product.objects.all())
     if request.method == 'GET':
-        order_bd = detail_oder(order_id)
+        order_bd = list_oder(id)
         if order_bd is None:
             return redirect('home')
         form_order = OrderForm(instance=order_bd)
@@ -66,7 +66,7 @@ def update(request, order_id):
         }
         return render(request, 'order.html', context)
     elif request.method == 'POST':
-        order_bd = detail_oder(order_id)
+        order_bd = list_oder(id)
         if order_bd is None:
             return redirect('home')
         form_order = OrderForm(request.POST, instance=order_bd)
@@ -83,3 +83,11 @@ def update(request, order_id):
                 'form_item': form_item,
             }
             return render(request, 'order.html', context)
+
+
+def delete(request, id):
+    order = list_oder(id)
+    if request.method == 'POST':
+        delete_order(order)
+        return redirect('home')
+    return render(request, 'confirm_delete.html', {'order': order})

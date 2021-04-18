@@ -1,6 +1,8 @@
 from django.db.models import Sum
+import locale
 
 from .models import Order, Item
+
 
 
 def list_orders():
@@ -18,6 +20,10 @@ def revenues_orders():
     return revenues['total__sum']
 
 
-def detail_oder(id):
+def list_oder(id):
     order = Order.objects.filter(id=id).first()
     return order
+
+
+def delete_order(order):
+    order.delete()
