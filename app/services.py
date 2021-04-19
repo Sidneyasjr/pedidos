@@ -1,8 +1,4 @@
-from django.db.models import Sum
-import locale
-
 from .models import Order, Item
-
 
 
 def list_orders():
@@ -16,8 +12,23 @@ def total_orders():
 
 
 def revenues_orders():
-    revenues = Order.objects.aggregate(Sum('total'))
-    return revenues['total__sum']
+    items = Item.objects.all()
+    revenues = []
+    for item in items:
+        price = item.price
+        quantity = item.quantity
+        total = quantity * price
+        revenues.append(total)
+    return sum(revenues)
+
+
+def total_order(order):
+    items = Item.objects.filter(order=order)
+    for item in items:
+        price = item.price
+        quantity = item.quantity
+        total = quantity * price
+        return total
 
 
 def list_oder(id):

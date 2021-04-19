@@ -13,6 +13,14 @@
         <div class="row">
             <div class="col">
                 <div class="card shadow">
+                    <div class="card-header align-self-end">
+                        {% if form_order.instance.pk %}
+                            <h3 class="display-5">Pedido nº: {{ form_order.instance.pk }}</h3>
+                            <h3 class="display-5">Data: {{ form_order.instance.date|format_date }}</h3>
+                        {% else %}
+                            <h3 class="display-4">Novo Pedido</h3>
+                        {% endif %}
+                    </div>
                     <div class="card-body">
                         <form role="form" method="post">
                             {% csrf_token %}
@@ -27,15 +35,16 @@
                             <div class="row">
                                 <div class="col-md-3">
                                     <div class="form-group">
-                                        <label for="{{ form_order.quantity.id_for_label }}">Quantidade</label>
-                                        {{ form_order.quantity }}
+                                        <label for="id_quantity">Quantidade</label>
+                                        <input type="number" readonly class="form-control form-control-sm"
+                                               id="id_quantity">
                                     </div>
                                 </div>
                                 <div class="col-md-3">
                                     <div class="form-group">
-                                        {{ form_order.errors }}
-                                        <label for="{{ form_order.total.id_for_label }}">Total</label>
-                                        {{ form_order.total }}
+                                        <label for="id_total">Total</label>
+                                        <input type="number" readonly class="form-control form-control-sm"
+                                               id="id_total">
                                     </div>
                                 </div>
                             </div>
@@ -53,7 +62,7 @@
                                     </tr>
                                     </thead>
                                     {{ form_item.management_form }}
-                                    <tbody id="form_item_{{ forloop.counter }}">
+                                    <tbody>
                                     {% for items in form_item %}
                                         {{ items.errors }}
                                         {% if forloop.first %}
@@ -65,7 +74,9 @@
                                             <td>{{ items.product }}</td>
                                             <td>{{ items.price }}</td>
                                             <td>{{ items.quantity }}</td>
-                                            <td>{{ items.total }}</td>
+                                            <td><input id="id_item_set-{{ forloop.counter0 }}-total" type="number"
+                                                       name="total_item" readonly class="form-control form-control-sm total">
+                                            </td>
                                             <td>{{ items.rentability }}</td>
                                             <td>{{ items.DELETE }}</td>
                                         </tr>
@@ -85,7 +96,8 @@
                                 <button type="submit" class="btn btn-success"><i class="fas fa-save"></i> Salvar
                                 </button>
                                 {% if form_order.instance.pk %}
-                                    <a href="{% url 'delete' form_order.instance.pk %}" type="button" class="btn btn-danger">
+                                    <a href="{% url 'delete' form_order.instance.pk %}" type="button"
+                                       class="btn btn-danger">
                                         <i class="fas fa-minus"></i>
                                         Excluir
                                     </a>
@@ -119,15 +131,7 @@
             priceProduct.push(productPrice)
         {% endfor %}
 
-        function removeTotalOrder() {
-            let totalOrder = 0;
-            $(".total").each(function () {
-                if ($(this).val() > 0) {
-                    totalOrder += parseFloat($(this).val());
-                }
-            });
-            $('#id_total').val(totalOrder.toFixed(2));
-
+        function calc_total_qtd() {
             let quantityOrder = 0;
             $(".quantity").each(function () {
                 if ($(this).val() > 0) {
@@ -136,26 +140,23 @@
 
             });
             $('#id_quantity').val(quantityOrder);
+
+            let totalPrice = 0
+            $(".price").each(function () {
+                if ($(this).val() > 0) {
+                    totalPrice += parseFloat($(this).val());
+                }
+            });
+            let totalOrder = totalPrice * quantityOrder
+            $('#id_total').val(totalOrder.toFixed(2));
         }
 
+        $(document).ready(function () {
+            calc_total_qtd();
+        })
 
-        $('.form tbody tr').change(function calcTotalOrder() {
-            let totalOrder = 0;
-            $(".total").each(function () {
-                if ($(this).val() > 0) {
-                    totalOrder += parseFloat($(this).val());
-                }
-            });
-            $('#id_total').val(totalOrder.toFixed(2));
-
-            let quantityOrder = 0;
-            $(".quantity").each(function () {
-                if ($(this).val() > 0) {
-                    quantityOrder += parseInt($(this).val());
-                }
-
-            });
-            $('#id_quantity').val(quantityOrder);
+        $('.form tbody tr').change(function () {
+            calc_total_qtd();
         })
 
 
@@ -195,7 +196,7 @@
                 prefix: '{{ form_item.prefix }}',
                 addText: 'Novo Item',
                 deleteText: 'Remover',
-                removed: removeTotalOrder,
+                removed: calc_total_qtd,
             });
         })
     </script>

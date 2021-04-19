@@ -13,3 +13,4 @@ Unipath==1.1
 whitenoise==5.2.0
 gunicorn==20.1.0
 psycopg2-binary
+django-extensions

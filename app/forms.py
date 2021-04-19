@@ -11,12 +11,6 @@ class OrderForm(forms.ModelForm):
         widgets = {
             'customer': Select(
                 attrs={'class': 'form-control form-control-sm'}
-            ),
-            'quantity': NumberInput(
-                attrs={'readonly': True, 'class': 'form-control form-control-sm'}
-            ),
-            'total': NumberInput(
-                attrs={'readonly': True, 'class': 'form-control form-control-sm'}
             )
         }
 
@@ -34,9 +28,6 @@ class ItemForm(forms.ModelForm):
             ),
             'quantity': NumberInput(
                 attrs={'oninput': 'dynamic_total(this)', 'class': 'form-control form-control-sm quantity'}
-            ),
-            'total': NumberInput(
-                attrs={'readonly': True, 'min': '0', 'step': '0.01', 'class': 'form-control form-control-sm total'}
             ),
             'rentability': Select(
                 attrs={'readonly': True, 'class': 'form-control form-control-sm'}

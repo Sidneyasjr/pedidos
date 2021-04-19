@@ -12,9 +12,9 @@ from .services import *
 @login_required(login_url="/login/")
 def index(request):
     orders = list_orders()
-    total = total_orders()
+    count_orders = total_orders()
     revenues = revenues_orders()
-    context = {'orders': orders, 'total': total, 'revenues': revenues}
+    context = {'orders': orders, 'count_orders': count_orders, 'revenues': revenues}
 
     html_template = loader.get_template('index.html')
     return HttpResponse(html_template.render(context, request))

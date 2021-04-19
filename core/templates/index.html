@@ -20,7 +20,7 @@
                                 <div class="row">
                                     <div class="col">
                                         <h5 class="card-title text-uppercase text-muted mb-0">Total de Pedidos</h5>
-                                        <span class="h2 font-weight-bold mb-0">{{ total }}</span>
+                                        <span class="h2 font-weight-bold mb-0">{{ count_orders }}</span>
                                     </div>
                                     <div class="col-auto">
                                         <div class="icon icon-shape bg-gradient-success text-white rounded-circle shadow">
@@ -85,9 +85,9 @@
                                     <th scope="row">
                                         <span class="mb-0 text-sm">{{ order.id }}</span>
                                     </th>
-                                    <td>{{ order.date }}</td>
+                                    <td>{{ order.date|format_date }}</td>
                                     <td>{{ order.customer }}</td>
-                                    <td>{{ order.total|format_monetary }}</td>
+                                    <td>{{ order.total }}</td>
                                     <td>
                                         <a class="btn btn-primary btn-sm" href="{% url 'edit' order.id %}"><i
                                                 class="fas fa-edit"></i></a>

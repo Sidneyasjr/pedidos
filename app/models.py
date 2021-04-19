@@ -30,8 +30,6 @@ class Product(models.Model):
 class Order(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
     date = models.DateField('date', null=True, blank=True, auto_now_add=True)
-    quantity = models.PositiveIntegerField('quantidade', null=True, blank=True)
-    total = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
 
     class Meta:
         verbose_name_plural = 'pedidos'
@@ -52,7 +50,6 @@ class Item(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField('quantidade', null=False, blank=False)
     price = models.DecimalField('preço', max_digits=15, decimal_places=2, null=False, blank=False)
-    total = models.DecimalField(max_digits=15, decimal_places=2, null=False, blank=False)
     rentability = models.IntegerField(choices=RENTABILITY_CHOICES, null=False, blank=False, default=2)
 
     class Meta:
