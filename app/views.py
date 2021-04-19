@@ -1,8 +1,6 @@
 from django.contrib.auth.decorators import login_required
 from django.forms import inlineformset_factory
-from django.http import HttpResponse
 from django.shortcuts import render, redirect
-from django.template import loader
 
 from .forms import OrderForm, ItemForm
 from .models import Product
@@ -12,12 +10,11 @@ from .services import *
 @login_required(login_url="/login/")
 def index(request):
     orders = list_orders()
-    count_orders = total_orders()
+    count = count_orders()
     revenues = revenues_orders()
-    context = {'orders': orders, 'count_orders': count_orders, 'revenues': revenues}
+    context = {'orders': orders, 'count_orders': count, 'revenues': revenues}
 
-    html_template = loader.get_template('index.html')
-    return HttpResponse(html_template.render(context, request))
+    return render(request, 'index.html', context)
 
 
 @login_required(login_url="/login/")
@@ -87,7 +84,9 @@ def update(request, id):
 
 def delete(request, id):
     order = list_oder(id)
+    total = total_order(id)
+    quantity = quantity_order(id)
     if request.method == 'POST':
         delete_order(order)
         return redirect('home')
-    return render(request, 'confirm_delete.html', {'order': order})
+    return render(request, 'confirm_delete.html', {'order': order, 'total': total, 'quantity': quantity})

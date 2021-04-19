@@ -75,7 +75,6 @@
                                 <th scope="col">#</th>
                                 <th scope="col">Data</th>
                                 <th scope="col">Cliente</th>
-                                <th scope="col">Total</th>
                                 <th scope="col">Editar|Excluir</th>
                             </tr>
                             </thead>
@@ -83,11 +82,10 @@
                             {% for order in orders %}
                                 <tr>
                                     <th scope="row">
-                                        <span class="mb-0 text-sm">{{ order.id }}</span>
+                                        <span class="mb-0 text-sm">{{ order }}</span>
                                     </th>
-                                    <td>{{ order.date|format_date }}</td>
+                                    <td>{{ order.date }}</td>
                                     <td>{{ order.customer }}</td>
-                                    <td>{{ order.total }}</td>
                                     <td>
                                         <a class="btn btn-primary btn-sm" href="{% url 'edit' order.id %}"><i
                                                 class="fas fa-edit"></i></a>
