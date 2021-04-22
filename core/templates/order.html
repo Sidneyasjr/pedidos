@@ -75,7 +75,8 @@
                                             <td>{{ items.price }}</td>
                                             <td>{{ items.quantity }}</td>
                                             <td><input id="id_item_set-{{ forloop.counter0 }}-total" type="number"
-                                                       name="total_item" readonly class="form-control form-control-sm total">
+                                                       name="total_item" readonly
+                                                       class="form-control form-control-sm total">
                                             </td>
                                             <td>{{ items.rentability }}</td>
                                             <td>{{ items.DELETE }}</td>
@@ -131,32 +132,56 @@
             priceProduct.push(productPrice)
         {% endfor %}
 
-        function calc_total_qtd() {
+        function dynamic_quantity() {
+            let index = -1;
+            $(".quantity").each(function () {
+                index++;
+                let product = $('#id_item_set-' + index + '-product').val();
+                let step = multiples[product - 1]
+                let quantity = $('#id_item_set-' + index + '-quantity');
+                quantity.attr({'step': step});
+            });
+        }
+
+        function calc_total_item() {
+            let index = -1;
+            $(".total").each(function () {
+                index++;
+                price = $('#id_item_set-' + index + '-price').val();
+                quantity = $('#id_item_set-' + index + '-quantity').val();
+                let total = price * quantity;
+                $(this).val(total.toFixed(2));
+            });
+        }
+
+        function calc_total_qtd_order() {
             let quantityOrder = 0;
             $(".quantity").each(function () {
                 if ($(this).val() > 0) {
                     quantityOrder += parseInt($(this).val());
                 }
-
             });
             $('#id_quantity').val(quantityOrder);
 
             let totalPrice = 0
-            $(".price").each(function () {
+            $(".total").each(function () {
                 if ($(this).val() > 0) {
                     totalPrice += parseFloat($(this).val());
                 }
             });
-            let totalOrder = totalPrice * quantityOrder
-            $('#id_total').val(totalOrder.toFixed(2));
+            $('#id_total').val(totalPrice.toFixed(2));
         }
 
         $(document).ready(function () {
-            calc_total_qtd();
+            calc_total_item();
+            dynamic_quantity();
+            calc_total_qtd_order();
         })
 
         $('.form tbody tr').change(function () {
-            calc_total_qtd();
+            calc_total_item();
+            dynamic_quantity();
+            calc_total_qtd_order();
         })
 
 
@@ -169,18 +194,14 @@
             quantity.val(step)
             let priceDefault = priceProduct[product - 1]
             $('#id_item_set-' + index + '-price').val(priceDefault);
-            $('#id_item_set-' + index + '-total').val(priceDefault * step);
+            calc_total_item();
         }
-
 
         function dynamic_total(object) {
             let index = object.closest("tr").rowIndex - 1;
             let product = $('#id_item_set-' + index + '-product').val();
             let priceDefault = parseFloat(priceProduct[product - 1])
-            let quantity = $('#id_item_set-' + index + '-quantity').val();
             let price = $('#id_item_set-' + index + '-price').val();
-            let total = parseFloat(quantity) * parseFloat(price);
-            $('#id_item_set-' + index + '-total').val(total.toFixed(2));
             let percent = (priceDefault / 100) * 10;
             if (price > priceDefault) {
                 $('#id_item_set-' + index + '-rentability').val('1');
@@ -189,6 +210,7 @@
             } else {
                 $('#id_item_set-' + index + '-rentability').val('2');
             }
+            calc_total_item();
         }
 
         $(function () {
@@ -196,7 +218,7 @@
                 prefix: '{{ form_item.prefix }}',
                 addText: 'Novo Item',
                 deleteText: 'Remover',
-                removed: calc_total_qtd,
+                removed: calc_total_qtd_order,
             });
         })
     </script>
